@@ -1,19 +1,16 @@
 import express from "express";
+import tweetRouter from "./routes/tweetRoutes.js";
+import AppError from "./utils/appError.js";
+import { errorController } from "./controllers/errorController.js";
 
-const app = express();
+export const app = express();
 
 app.use(express.json());
 
-app.get("/api/v1/tweet", (req, res) => {
-  res.status(200).json({ message: "Hello world!" });
+app.use("/api/v1/tweets", tweetRouter);
+
+app.all("*", (req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 
-app.post("/api/v1/tweet", (req, res) => {
-  console.log(req.body);
-  res.send("Done");
-});
-
-const port = 5000;
-app.listen(port, () => {
-  console.log(`App running on port ${port}...`);
-});
+app.use(errorController);

@@ -3,8 +3,16 @@ import tweetRouter from "./routes/tweetRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import AppError from "./utils/appError.js";
 import { errorController } from "./controllers/errorController.js";
+import rateLimit from "express-rate-limit";
 
 export const app = express();
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 100,
+});
+
+app.use(limiter);
 
 app.use(express.json());
 

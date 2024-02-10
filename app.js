@@ -8,10 +8,14 @@ import helmet from "helmet";
 import mongoSanitize from "express-mongo-sanitize";
 import xss from "xss-clean";
 import hpp from "hpp";
+import cors from "cors";
 
 export const app = express();
 
 app.use(helmet());
+
+// Implement CORS
+app.use(cors());
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,

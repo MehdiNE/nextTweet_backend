@@ -34,12 +34,56 @@ const createSendToken = (user, statusCode, message, res) => {
   });
 };
 
+export const checkUserExist = catchAsync(async (req, res, next) => {
+  const { phone, email, isEmail } = req.body;
+
+  // 1) Check if email and phone exist
+  const user = await User.findOne(isEmail ? { email } : { phone });
+
+  if (user) {
+    return next(
+      new AppError(
+        `${
+          isEmail ? "Email" : "Phone number"
+        } is taken!. Try with a different ${
+          isEmail ? "Email" : "Phone number"
+        }.`,
+        400
+      )
+    );
+  }
+
+  res.status(200).json({
+    status: "success",
+  });
+});
+
 export const signup = catchAsync(async (req, res, next) => {
+  const { password, confirmPassword, name, email } = req.body;
+
+  // 1) Check if email and password exist
+  if (!email || !password || !name || !confirmPassword) {
+    return next(new AppError("Please provide email, password and name!", 400));
+  }
+
+  const user = await User.findOne({ email });
+
+  if (user) {
+    return next(
+      new AppError("Email is taken!. Try with a different email.", 400)
+    );
+  }
+
+  if (password !== confirmPassword) {
+    return next(
+      new AppError("Password and Confirm password should be the same!", 400)
+    );
+  }
+
   const newUser = await User.create({
     name: req.body.name,
     email: req.body.email,
     password: req.body.password,
-    confirmPassword: req.body.confirmPassword,
   });
 
   createSendToken(newUser, 201, "User created successfully", res);

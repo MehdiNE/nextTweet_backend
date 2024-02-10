@@ -24,6 +24,9 @@ const userSchema = new mongoose.Schema({
   location: {
     type: String,
   },
+  phoneNumber: {
+    type: String,
+  },
   url: {
     type: String,
   },
@@ -47,9 +50,6 @@ const userSchema = new mongoose.Schema({
   },
   statusesCount: {
     type: Number,
-  },
-  createdAt: {
-    type: String,
   },
   createdAt: {
     type: String,
